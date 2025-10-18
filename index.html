@@ -3,24 +3,27 @@
 <head>
   <meta charset="utf-8" />
   <link rel="stylesheet" href="style.css">
-  
-  <title>Date Converter (with Copy)</title>
+  <title>Date Converter (with Copy on Top)</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width:800px; margin:20px; background-color: aquamarine; }
+    body { font-family: Arial, sans-serif; max-width:800px; margin:20px; }
     pre { background:#bcf5dd; padding:10px; border-radius:6px; white-space:pre-wrap; }
     button { margin-top:10px; padding:6px 12px; border:none; border-radius:6px; cursor:pointer; background:#0078d7; color:white; }
     button:hover { background:#7faac9; }
     #errors { color:crimson; }
+    .top-controls { display:flex; gap:10px; align-items:center; margin-bottom:10px; }
   </style>
 </head>
 <body>
   <h2>Convert Dates → Short Form (e.g. 5 Jun 2025)</h2>
-  <input type="file" id="fileInput" accept=".txt" />
-  <button id="convertBtn">Convert</button>
+
+  <div class="top-controls">
+    <input type="file" id="fileInput" accept=".txt" />
+    <button id="convertBtn">Convert</button>
+    <button id="copyBtn" style="display:none;">Copy Converted Dates</button>
+  </div>
 
   <h3>Converted Output</h3>
   <pre id="preview">(no data yet)</pre>
-  <button id="copyBtn" style="display:none;">Copy Converted Dates</button>
 
   <h3>Invalid / Skipped Lines</h3>
   <pre id="errors">(none)</pre>
@@ -132,7 +135,9 @@ document.getElementById('convertBtn').addEventListener('click', () => {
 document.getElementById('copyBtn').addEventListener('click', () => {
   const text = document.getElementById('preview').textContent;
   navigator.clipboard.writeText(text).then(() => {
-    alert('Converted dates copied to clipboard!');
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = 'Copy Converted Dates', 2000);
   });
 });
 </script>
