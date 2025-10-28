@@ -1,0 +1,5 @@
+Shah Alam=3000
+Alam=500
+Nur=505
+File=1001
+SKT=600
