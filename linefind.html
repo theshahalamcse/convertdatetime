@@ -3,59 +3,149 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Find Specific Line by Word</title>
+<title>Find Lines by Word (Responsive)</title>
 <style>
-  body { font-family: Arial, sans-serif; margin: 20px; }
-  textarea, input { width: 100%; padding: 10px; margin-top: 10px; font-size: 16px; }
-  #output { 
-    background: #f9f9f9; 
-    border: 1px solid #ccc; 
-    padding: 10px; 
-    margin-top: 10px; 
-    white-space: pre-wrap;
+  :root {
+    --primary: #007bff;
+    --primary-hover: #0056b3;
+    --bg-light: #f9f9f9;
+    --text-color: #222;
   }
-  .highlight { background: yellow; font-weight: bold; }
+
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background: var(--bg-light);
+    color: var(--text-color);
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  textarea, input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    resize: vertical;
+  }
+
+  #output {
+    width: 100%;
+    min-height: 150px;
+    margin-top: 15px;
+    font-size: 16px;
+    white-space: pre-wrap;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    background: #fff;
+    box-sizing: border-box;
+  }
+
+  button.copy-btn {
+    background: var(--primary);
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    margin-top: 10px;
+    width: 100%;
+    transition: background 0.3s;
+  }
+
+  button.copy-btn:hover {
+    background: var(--primary-hover);
+  }
+
+  /* ✅ Toast Notification (Top Position) */
+  #toast {
+    visibility: hidden;
+    min-width: 160px;
+    background: #28a745;
+    color: white;
+    text-align: center;
+    border-radius: 6px;
+    padding: 10px;
+    position: fixed;
+    z-index: 100;
+    left: 50%;
+    top: 20px;
+    transform: translateX(-50%);
+    font-size: 14px;
+  }
+
+  #toast.show {
+    visibility: visible;
+    animation: fadein 0.5s, fadeout 0.5s 2s;
+  }
+
+  @keyframes fadein {
+    from { top: 0; opacity: 0; }
+    to { top: 20px; opacity: 1; }
+  }
+
+  @keyframes fadeout {
+    from { top: 20px; opacity: 1; }
+    to { top: 0; opacity: 0; }
+  }
+
+  @media (max-width: 600px) {
+    body { margin: 10px; }
+    textarea, input { font-size: 15px; }
+    button.copy-btn { font-size: 14px; }
+  }
 </style>
 </head>
 <body>
 
 <h2>Find Lines Containing a Specific Word</h2>
 
-<textarea id="inputText" rows="10" placeholder="Enter your text here..."></textarea>
-
+<textarea id="inputText" rows="8" placeholder="Enter your text here..."></textarea>
 <input type="text" id="searchWord" placeholder="Type word to find lines..." />
 
-<div id="output"></div>
+<textarea id="output" readonly placeholder="Matched lines will appear here..."></textarea>
+
+<button class="copy-btn" onclick="copyAll()">Copy All</button>
+
+<!-- ✅ Toast Notification -->
+<div id="toast">Copied!</div>
 
 <script>
 const inputText = document.getElementById('inputText');
 const searchWord = document.getElementById('searchWord');
 const output = document.getElementById('output');
+const toast = document.getElementById('toast');
 
 function findLines() {
   const lines = inputText.value.split('\n');
   const word = searchWord.value.trim().toLowerCase();
-  
-  if (!word) {
-    output.innerHTML = '';
-    return;
-  }
+  output.value = '';
 
-  const result = lines
-    .map((line, i) => {
-      if (line.toLowerCase().includes(word)) {
-        const highlighted = line.replace(
-          new RegExp(word, 'gi'),
-          match => `<span class="highlight">${match}</span>`
-        );
-        return `Line ${i + 1}: ${highlighted}`;
-      }
-      return null;
-    })
+  if (!word) return;
+
+  const matched = lines
+    .map((line, i) => line.toLowerCase().includes(word) ? `Line ${i + 1}: ${line}` : null)
     .filter(Boolean)
     .join('\n');
 
-  output.innerHTML = result || 'No lines found.';
+  output.value = matched || 'No lines found.';
+}
+
+function copyAll() {
+  if (output.value.trim() !== '') {
+    navigator.clipboard.writeText(output.value).then(() => {
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    });
+  }
 }
 
 inputText.addEventListener('input', findLines);
