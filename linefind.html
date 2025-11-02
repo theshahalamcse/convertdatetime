@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Specific Line by Word</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; }
+  textarea, input { width: 100%; padding: 10px; margin-top: 10px; font-size: 16px; }
+  #output { 
+    background: #f9f9f9; 
+    border: 1px solid #ccc; 
+    padding: 10px; 
+    margin-top: 10px; 
+    white-space: pre-wrap;
+  }
+  .highlight { background: yellow; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<h2>Find Lines Containing a Specific Word</h2>
+
+<textarea id="inputText" rows="10" placeholder="Enter your text here..."></textarea>
+
+<input type="text" id="searchWord" placeholder="Type word to find lines..." />
+
+<div id="output"></div>
+
+<script>
+const inputText = document.getElementById('inputText');
+const searchWord = document.getElementById('searchWord');
+const output = document.getElementById('output');
+
+function findLines() {
+  const lines = inputText.value.split('\n');
+  const word = searchWord.value.trim().toLowerCase();
+  
+  if (!word) {
+    output.innerHTML = '';
+    return;
+  }
+
+  const result = lines
+    .map((line, i) => {
+      if (line.toLowerCase().includes(word)) {
+        const highlighted = line.replace(
+          new RegExp(word, 'gi'),
+          match => `<span class="highlight">${match}</span>`
+        );
+        return `Line ${i + 1}: ${highlighted}`;
+      }
+      return null;
+    })
+    .filter(Boolean)
+    .join('\n');
+
+  output.innerHTML = result || 'No lines found.';
+}
+
+inputText.addEventListener('input', findLines);
+searchWord.addEventListener('input', findLines);
+</script>
+
+</body>
+</html>
