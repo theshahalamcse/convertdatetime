@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Line Filter (Exclude Words)</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 0; padding: 16px; background: #f8f9fa; }
+  h2 { text-align: center; margin-bottom: 12px; }
+  .container { display: flex; flex-wrap: wrap; gap: 12px; }
+  .box { flex: 1 1 320px; display: flex; flex-direction: column; }
+  label { font-weight: bold; margin-bottom: 6px; }
+  textarea {
+    width: 100%; min-height: 300px; padding: 10px;
+    font-family: monospace; font-size: 14px;
+    resize: vertical; border-radius: 8px; border: 1px solid #ccc;
+  }
+  .toast {
+    position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
+    background: #222; color: white; padding: 8px 14px; border-radius: 8px;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; }
+  button {
+    margin-top: 8px; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc;
+    cursor: pointer; background: white;
+  }
+</style>
+</head>
+<body>
+
+<h2>Show Lines That Do <u>Not</u> Contain Words</h2>
+
+<div class="toast" id="toast">Copied!</div>
+
+<div class="container">
+  <div class="box">
+    <label>Input Text</label>
+    <textarea id="inputText" placeholder="Enter your main text...">apple is red
+banana is yellow
+orange is juicy
+apple pie is sweet</textarea>
+  </div>
+
+  <div class="box">
+    <label>Exclude Words (one per line)</label>
+    <textarea id="excludeWords" placeholder="Write words to exclude...">apple
+sweet</textarea>
+  </div>
+
+  <div class="box">
+    <label>Output (lines without excluded words)</label>
+    <textarea id="outputText" readonly></textarea>
+    <button id="copyBtn">Copy Output</button>
+  </div>
+</div>
+
+<script>
+const inputEl = document.getElementById('inputText');
+const excludeEl = document.getElementById('excludeWords');
+const outputEl = document.getElementById('outputText');
+const toast = document.getElementById('toast');
+const copyBtn = document.getElementById('copyBtn');
+
+function showToast(text = 'Copied!', ms = 1200) {
+  toast.textContent = text;
+  toast.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => toast.classList.remove('show'), ms);
+}
+
+function filterLines() {
+  const lines = inputEl.value.split(/\r?\n/);
+  const excludeWords = excludeEl.value.split(/\r?\n/).map(w => w.trim()).filter(Boolean);
+
+  const result = lines.filter(line => {
+    return !excludeWords.some(word => line.includes(word));
+  }).join('\n');
+
+  outputEl.value = result;
+}
+
+// live update
+inputEl.addEventListener('input', filterLines);
+excludeEl.addEventListener('input', filterLines);
+
+// copy button
+copyBtn.addEventListener('click', async () => {
+  await navigator.clipboard.writeText(outputEl.value);
+  showToast();
+});
+
+filterLines(); // initial run
+</script>
+
+</body>
+</html>
