@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Responsive Live Line Cross Match — Fixed</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    margin: 0; padding: 18px; background: #f7fafc; color: #0f172a;
+  }
+  h1 { text-align:center; margin: 6px 0 18px; font-size:20px; }
+  .container {
+    display:flex; flex-direction:column; gap:14px;
+  }
+  .panel { display:flex; flex-direction:column; gap:8px; }
+  label { font-weight:600; color:#102a43; }
+  textarea {
+    width:100%; min-height:200px; padding:12px; border-radius:10px;
+    border:1px solid #e2e8f0; background:#fff; font-size:14px; resize:vertical;
+    line-height:1.4;
+  }
+  textarea:focus { outline: none; box-shadow:0 0 0 4px rgba(59,130,246,0.08); border-color:#2563eb; }
+  .row { display:flex; gap:12px; flex-direction:column; }
+  .controls { display:flex; gap:8px; align-items:center; justify-content:space-between; margin-top:6px; }
+  .rightside { display:flex; gap:10px; align-items:center; }
+  .btn {
+    padding:8px 12px; border-radius:8px; border:none; cursor:pointer; font-weight:600;
+    background:#2563eb; color:white;
+  }
+  .btn:active { transform:translateY(1px); }
+  .badge { background:#eef2ff; color:#3730a3; padding:6px 10px; border-radius:999px; font-weight:600; }
+  .toast {
+    position:fixed; right:18px; bottom:18px; padding:10px 14px; background:#111827; color:white;
+    border-radius:8px; box-shadow:0 6px 20px rgba(2,6,23,0.4); opacity:0; transform:translateY(8px);
+    transition:opacity .22s ease, transform .22s ease;
+  }
+  .toast.show { opacity:1; transform:translateY(0); }
+  @media(min-width:768px){
+    .container { flex-direction:row; gap:18px; }
+    .panel { width:32%; }
+    .row { flex-direction:column; }
+  }
+</style>
+</head>
+<body>
+  <h1>Live Line Cross Match — Show Only Matched Lines</h1>
+
+  <div class="container">
+    <div class="panel">
+      <label for="left">Left Input (Main Text)</label>
+      <textarea id="left" placeholder="Paste your left text here — one item per line..."></textarea>
+      <div style="font-size:13px;color:#475569;margin-top:6px;">
+        Example: type or paste multiline text. Matching is <strong>case-insensitive</strong>.
+      </div>
+    </div>
+
+    <div class="panel">
+      <label for="middle">Middle Input (Match Words or Lines)</label>
+      <textarea id="middle" placeholder="Enter words or lines to match (one per line)"></textarea>
+      <div style="display:flex;justify-content:space-between;margin-top:6px">
+        <div style="font-size:13px;color:#475569;">Each middle line is used as a match token (substring match).</div>
+        <div style="font-size:13px;color:#475569;">Empty middle → no matches.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <label for="right">Right Output (Matched Lines from Left)</label>
+      <textarea id="right" readonly placeholder="Matched lines appear here..."></textarea>
+
+      <div class="controls">
+        <div class="rightside">
+          <div class="badge" id="count">Matched: 0</div>
+        </div>
+
+        <div style="display:flex;gap:8px;">
+          <button class="btn" id="copyBtn">Copy Output</button>
+          <button class="btn" id="demoBtn" style="background:#10b981;">Load Demo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Copied!</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const left = document.getElementById('left');
+  const middle = document.getElementById('middle');
+  const right = document.getElementById('right');
+  const countBadge = document.getElementById('count');
+  const copyBtn = document.getElementById('copyBtn');
+  const demoBtn = document.getElementById('demoBtn');
+  const toast = document.getElementById('toast');
+
+  // Core matching function — case-insensitive substring match
+  function crossMatch() {
+    // Split into lines, trim, keep empty lines if desired? Here we drop fully-empty lines.
+    const leftLines = left.value.split(/\r?\n/).map(s => s.trim()).filter(l => l.length > 0);
+    // tokens to match (trim and ignore empty)
+    const tokens = middle.value.split(/\r?\n/).map(s => s.trim()).filter(t => t.length > 0);
+
+    if (tokens.length === 0 || leftLines.length === 0) {
+      right.value = '';
+      countBadge.textContent = 'Matched: 0';
+      return;
+    }
+
+    // Lowercase once for efficiency
+    const lowerTokens = tokens.map(t => t.toLowerCase());
+
+    const matched = leftLines.filter(line => {
+      const ll = line.toLowerCase();
+      // match if any token is a substring
+      return lowerTokens.some(tok => ll.includes(tok));
+    });
+
+    right.value = matched.join('\n');
+    countBadge.textContent = `Matched: ${matched.length}`;
+  }
+
+  // throttle updates slightly to keep UI smooth when pasting huge text
+  let tmr = null;
+  function scheduleMatch() {
+    if (tmr) clearTimeout(tmr);
+    tmr = setTimeout(() => { crossMatch(); tmr = null; }, 80);
+  }
+
+  left.addEventListener('input', scheduleMatch);
+  middle.addEventListener('input', scheduleMatch);
+
+  // Copy output
+  copyBtn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(right.value);
+      showToast('Copied!');
+    } catch (e) {
+      // fallback
+      right.select();
+      document.execCommand('copy');
+      showToast('Copied!');
+    }
+  });
+
+  // Demo loader to quickly test
+  demoBtn.addEventListener('click', () => {
+    left.value = [
+      'User: alice@example.com logged in',
+      'Error: connection timeout on port 8080',
+      'Backup completed successfully at 03:00',
+      'User: bob@example.com logged out',
+      'Warning: disk usage 92% on /dev/sda1'
+    ].join('\\n');
+
+    middle.value = ['user:', 'error', 'disk'].join('\\n');
+    crossMatch();
+  });
+
+  // toast small helper
+  let toastTimer = null;
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { toast.classList.remove('show'); }, 1500);
+  }
+
+  // initial run
+  crossMatch();
+});
+</script>
+</body>
+</html>
