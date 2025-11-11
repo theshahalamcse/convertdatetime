@@ -15,12 +15,21 @@
    .card:hover {
             background: #4be7b891;
             color: rgb(14, 1, 1);
-            transform: translateY(-5px); /* optional: lift card on hover */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* optional: add shadow */
-        }
+            animation: 1.5s ease-in-out forwards rotate360;
+}
+
+@keyframes rotate360 {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
         .card:hover img {
             opacity: 0.8; /* optional: dim image slightly */
         }
+        
     </style>
 </head>
 <body>
