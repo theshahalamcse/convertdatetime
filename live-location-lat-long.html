@@ -5,16 +5,32 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Live Lat-Long</title>
 <style>
-  /* General Styles */
   body {
     font-family: system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;
     margin:0; padding:20px;
-    background:#77e9b3cb;
+    background:#f7f7fb;
     color:#111;
-    display:flex; justify-content:center; align-items:center; min-height:100vh;
+    display:flex; flex-direction:column;
+    justify-content:flex-start; align-items:center;
+    min-height:100vh;
   }
 
-  /* Card Styles */
+  /* Refresh button */
+  .refresh-btn {
+    padding:10px 18px;
+    background:#0d6efd;
+    color:#fff;
+    font-size:16px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    margin-bottom:15px;
+    transition:0.3s;
+  }
+  .refresh-btn:hover {
+    background:#0b5ed7;
+  }
+
   .card {
     width:90%; max-width:420px;
     padding:20px;
@@ -22,10 +38,8 @@
     background:#fff;
     box-shadow:0 6px 18px rgba(16,24,40,.08);
     text-align:center;
-    transition: all 0.3s;
   }
 
-  /* Input Styles */
   input {
     width:100%;
     padding:12px;
@@ -37,7 +51,6 @@
     box-sizing:border-box;
   }
 
-  /* Button Styles */
   button {
     margin-top:15px;
     width:100%;
@@ -51,26 +64,21 @@
     transition: all 0.3s;
   }
 
-  button:disabled {
-    opacity:.5;
-    cursor:not-allowed;
-  }
+  button:hover:not(:disabled) { background:#333; }
+  button:disabled { opacity:.5; cursor:not-allowed; }
 
-  /* Green state when copied */
+  /* Green copy state */
   button.copied {
-    background: #28a745; /* green */
-    color: #fff;
-    transition: background-color 0.3s, color 0.3s;
+    background:#28a745;
+    color:#fff;
   }
 
-  /* Small text */
   small {
     color:#777;
     display:block;
     margin-top:8px;
   }
 
-  /* Status message */
   #status {
     color:#b21;
     display:none;
@@ -78,24 +86,23 @@
     transition: opacity 0.3s;
   }
 
-  /* Responsive adjustments */
+  /* Responsive */
   @media (max-width: 480px) {
-    .card {
-      padding:15px;
-    }
-    input, button {
-      font-size:14px;
-      padding:10px;
-    }
+    input, button { font-size:14px; padding:10px; }
+    .refresh-btn { font-size:14px; padding:8px 14px; }
   }
 </style>
 </head>
 <body>
+
+  <!-- Refresh button -->
+  <button class="refresh-btn" onclick="location.reload()">🔄 Refresh</button>
+
   <div class="card">
     <h2>Live Latitude & Longitude</h2>
     <input id="linkField" readonly placeholder="Waiting for location..." />
     <button id="copyBtn">Copy lat,long</button>
-    <small>Allow location access</small>
+    <small>Allow location access. Works on HTTPS or localhost.</small>
     <p id="status"></p>
   </div>
 
@@ -148,12 +155,12 @@
     try {
       await navigator.clipboard.writeText(linkField.value);
       copyBtn.textContent = 'Copied!';
-      copyBtn.classList.add('copied'); // turn green
-      setTimeout(() => {
+      copyBtn.classList.add('copied');
+      setTimeout(()=>{
         copyBtn.textContent = 'Copy lat,long';
         copyBtn.classList.remove('copied');
-      }, 1500);
-    } catch(e) {
+      },1500);
+    } catch(e){
       showError('Copy failed.');
     }
   });
