@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAC / ONU Formatter</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#f2f2f7; padding:20px; }
+  .card { background:white; padding:20px; border-radius:12px; max-width:480px; margin:auto; box-shadow:0 3px 8px rgba(0,0,0,0.1); }
+  input { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px solid #ccc; font-size:16px; }
+  .row { display:flex; justify-content:space-between; align-items:center; margin-top:10px; }
+  .label { font-weight:bold; font-size:14px; }
+  .value { font-family:monospace; font-size:15px; word-break:break-all; }
+  button { padding:6px 10px; border:none; border-radius:6px; background:#007aff; color:white; cursor:pointer; font-size:14px; }
+  button:active { opacity:0.8; }
+  .invalid { border-color:red; }
+  @media(max-width:480px){ .row { flex-direction:column; align-items:flex-start; } button { margin-top:6px; } }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="title" style="font-size:22px;font-weight:bold;margin-bottom:10px;">ONU MAC Reformatter</div>
+
+  <label>Input MAC / ONU:</label>
+  <input id="macInput" placeholder="Enter MAC (any format)">
+
+  <div id="outputs"></div>
+</div>
+
+<script>
+function cleanMac(mac){
+  if(!mac) return null;
+  const hex = mac.replace(/[^0-9a-fA-F]/g, "");
+  return hex.length === 12 ? hex.toLowerCase() : null;
+}
+
+function format(norm, type){
+  const p = [norm.slice(0,2),norm.slice(2,4),norm.slice(4,6),norm.slice(6,8),norm.slice(8,10),norm.slice(10,12)];
+  const q = [norm.slice(0,4),norm.slice(4,8),norm.slice(8,12)];
+
+  switch(type){
+    case 'pairDot':   return p.join('.');
+    case 'pairColon': return p.join(':');
+    case 'pairHyph':  return p.join('-');
+    case 'quadDot':   return q.join('.');
+    case 'quadHyph':  return q.join('-');
+    case 'quadColon': return q.join(':');
+  }
+}
+
+const formats = [
+  { id:'pairDot',   label:'' },
+  { id:'pairColon', label:'' },
+  { id:'pairHyph',  label:'' },
+  { id:'quadDot',   label:'' },
+  { id:'quadHyph',  label:'' },
+  { id:'quadColon', label:'' }
+];
+
+const outputBox = document.getElementById('outputs');
+outputBox.innerHTML = formats.map(f => `
+ <div class='row'>
+    <div>
+      <div class='label'>${f.label}</div>
+      <div class='value' id='${f.id}'></div>
+    </div>
+    <button onclick="copyText('${f.id}', this)">Copy</button>
+  </div>
+`).join('');
+
+document.getElementById('macInput').addEventListener('input', () => {
+  const inp = document.getElementById('macInput');
+  const m = cleanMac(inp.value.trim());
+
+  if(!m){
+    inp.classList.add('invalid');
+    formats.forEach(f => document.getElementById(f.id).textContent = "Invalid MAC");
+    return;
+  }
+
+  inp.classList.remove('invalid');
+  formats.forEach(f => {
+    document.getElementById(f.id).textContent = format(m, f.id);
+  });
+});
+
+function copyText(id, btn){
+  const val = document.getElementById(id).textContent;
+  if(val && val !== "Invalid MAC"){
+    navigator.clipboard.writeText(val);
+    const prev = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.textContent = prev;
+      btn.disabled = false;
+    }, 1500); // change duration here (ms)
+  }
+  showToast();
+}
+
+function showToast(){
+  const t = document.getElementById('toast');
+  t.style.display = 'block';
+  t.style.opacity = 1;
+  setTimeout(() => { t.style.opacity = 0; }, 1200);
+  setTimeout(() => { t.style.display = 'none'; }, 1600);
+}
+</script>
+<div id="toast" style="position:fixed;top:15px;left:50%;transform:translateX(-100%);background:#111;color:#fff;padding:10px 18px;border-radius:8px;font-size:14px;opacity:0;transition:opacity .3s;z-index:999;">Copied!</div>
+</body>
+</html>
