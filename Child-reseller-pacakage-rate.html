@@ -18,9 +18,30 @@ input[type=number]::-webkit-outer-spin-button {
 .form-control:focus::placeholder {
     color: transparent;
 }
+#toast {
+  position: fixed;
+  cursor: pointer;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #000000;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 9999;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+#toast.show {
+  opacity: 1;
+}
 </style>
 </head>
 <body class="bg-light p-4">
+    <div id="toast">Copied!</div>
 
 <div class="container">
     <h4 class="mb-3 text-align-center text-center">Business Logic: A + B = C based on Row 1 % (Rows 2-5 auto-generate from Row 1)</h4>
@@ -46,7 +67,7 @@ input[type=number]::-webkit-outer-spin-button {
             <tr>
                 <td><input type="number" id="a2" class="form-control text-center" oninput="calculateRows()" placeholder="Input your base price"></td>
                 <td id="b2"></td>
-                <td id="c2"></td>
+                <td id="c2" class=""></td>
                 <td id="p2"></td>
             </tr>
             <tr>
@@ -116,8 +137,40 @@ function calculateRows() {
         }
     }
 
-    document.getElementById("sumC").innerHTML = sumC.toFixed(2);
 }
+function enableCopyOnResults(ids = ['c1','c2','c3','c4','c5']) {
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.add('copyable');
+        el.addEventListener('click', async () => {
+            const text = el.textContent.trim();
+            if (!text) return;
+            try {
+                await navigator.clipboard.writeText(text);
+                const original = el.textContent;
+                // Show toast
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    el.classList.remove('copied');
+                    el.textContent = original;
+                    toast.classList.remove('show');
+                }, 600); // change duration (ms) as needed
+            } catch (err) {
+                console.error('Copy failed', err);
+            }
+        });
+    });
+}
+
+// initialize copy handlers after DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+    enableCopyOnResults();
+    // ensure calculateRows runs if default values present
+    calculateRows();
+});
 </script>
 
 </body>
