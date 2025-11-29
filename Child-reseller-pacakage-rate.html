@@ -72,7 +72,7 @@ input[type=number]::-webkit-outer-spin-button {
             <tr>
                 <td><input type="number" id="a1" class="form-control text-center" oninput="calculateRows()" placeholder="Input your base price"></td>
                 <td><input type="number" id="b1" class="form-control text-center" oninput="calculateRows()" placeholder="Input your base price"></td>
-                <td id="c1" style="border: 1px dotted blue;"></td>
+                <td id="c1"></td>
                 <td id="p1"></td>
             </tr>
             <!-- Rows 2-5 (Auto-generate B based on Row 1 %) -->
@@ -169,7 +169,7 @@ function enableCopyOnResults(ids = ['c1','c2','c3','c4','c5']) {
                     el.classList.remove('copied');
                     el.textContent = original;
                     toast.classList.remove('show');
-                }, 600); // change duration (ms) as needed
+                }, 400); // change duration (ms) as needed
             } catch (err) {
                 console.error('Copy failed', err);
             }
