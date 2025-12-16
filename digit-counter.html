@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digit Increment</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+        }
+
+        .counter-container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 60px 80px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        #digit {
+            font-size: 120px;
+            font-weight: bold;
+            color: white;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            transition: transform 0.1s;
+        }
+
+        #digit:active {
+            transform: scale(0.95);
+        }
+
+        button {
+            font-size: 24px;
+            padding: 15px 40px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 18px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="counter-container">
+        <div class="label">Counter</div>
+        <div id="digit">0</div>
+        <button onclick="increment()">Click Me</button>
+    </div>
+
+    <script>
+        let count = 0;
+
+        function increment() {
+            count++;
+            document.getElementById('digit').textContent = count;
+            
+            if (count === 1000) {
+                setTimeout(() => {
+                    alert('🎉 Congratulations! You reached 1000! 🎉');
+                    count = 0;
+                    document.getElementById('digit').textContent = count;
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
