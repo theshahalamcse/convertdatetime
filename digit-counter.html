@@ -11,13 +11,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: rgb(202, 245, 202)
             font-family: 'Arial', sans-serif;
         }
 
         .counter-container {
             text-align: center;
-            background: rgba(255, 255, 255, 0.1);
+            color: black;
+            background: rgba(226, 243, 231, 0.904);
             backdrop-filter: blur(10px);
             padding: 60px 80px;
             border-radius: 20px;
@@ -27,7 +28,7 @@
         #digit {
             font-size: 120px;
             font-weight: bold;
-            color: white;
+        
             margin: 20px 0;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
             transition: transform 0.1s;
@@ -41,7 +42,6 @@
             font-size: 24px;
             padding: 15px 40px;
             background: white;
-            color: #667eea;
             border: none;
             border-radius: 50px;
             cursor: pointer;
@@ -53,6 +53,7 @@
         button:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background-color: rgb(170, 243, 188);
         }
 
         button:active {
@@ -60,7 +61,6 @@
         }
 
         .label {
-            color: rgba(255, 255, 255, 0.9);
             font-size: 18px;
             margin-bottom: 10px;
             text-transform: uppercase;
@@ -70,13 +70,13 @@
 </head>
 <body>
     <div class="counter-container">
-        <div class="label">Counter</div>
-        <div id="digit">0</div>
+        <div class="label">Pronounce Astagfirulla</div>
+        <div id="digit">Result</div>
         <button onclick="increment()">Click Me</button>
     </div>
 
     <script>
-        let count = 0;
+        let count = 995;
 
         function increment() {
             count++;
@@ -87,7 +87,7 @@
                     alert('🎉 Congratulations! You reached 1000! 🎉');
                     count = 0;
                     document.getElementById('digit').textContent = count;
-                }, 1000);
+                }, 80);
             }
         }
     </script>
