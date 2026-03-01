@@ -49,14 +49,35 @@
   }
 
   header {
-    position: relative;
+    position: sticky;
+    top: 0;
     z-index: 10;
     padding: 32px 40px 24px;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: linear-gradient(180deg, rgba(0,180,255,0.06) 0%, transparent 100%);
+    color: var(--text);
+    background: rgb(210, 252, 210);
+  }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    color: black
+  } 
+  .header_left_text h1{
+    color: black;
+  }
+  .search-container {
+    position: relative;
+  }
+  .search-input {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    font-size: 14px;
+    width: 200px;
   }
 
   .logo {
@@ -78,12 +99,12 @@
     font-size: 22px;
     font-weight: 700;
     letter-spacing: 1px;
-    color: #fff;
+    color: #020000;
   }
 
   .logo p {
     font-size: 11px;
-    color: var(--muted);
+    color: black
     letter-spacing: 2px;
     text-transform: uppercase;
   }
@@ -203,7 +224,38 @@
     color: #000000;
     white-space: pre-wrap;
     min-height: 120px;
+    max-height: 310px;
+    overflow-y: auto;
+    overflow-x: hidden;
     font-family: 'Noto Sans Bengali', sans-serif;
+    position: relative;
+  }
+  
+  .message-box.expanded {
+    overflow-y: auto;
+    max-height: none;
+  }
+  
+  .show-more-btn {
+    display: none;
+    margin-top: 8px;
+    padding: 6px 12px;
+    background: rgba(0, 180, 255, 0.1);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: 'Rajdhani', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .show-more-btn:hover {
+    background: rgba(0, 180, 255, 0.2);
+  }
+  
+  .show-more-btn.visible {
+    display: inline-block;
   }
 
   .copy-btn {
@@ -235,9 +287,9 @@
 
   .toast {
     position: fixed;
-    bottom: 30px;
+    top: 30px;
     left: 50%;
-    transform: translateX(-50%) translateY(80px);
+    transform: translateX(-50%) translateY(-80px);
     background: var(--accent3);
     color: #0a0e1a;
     font-family: 'Rajdhani', sans-serif;
@@ -267,11 +319,16 @@
 <body>
 
 <header>
-  <div class="logo">
+  <div class="header-left">
+    <div class="logo">
     <div class="logo-icon">🌐</div>
     <div>
       <h1>DISCOVERY INTERNET</h1>
       <p>Message Template Panel</p>
+    </div>
+  </div>
+    <div class="search-container">
+      <input type="text" id="search" class="search-input" placeholder="Search templates...">
     </div>
   </div>
   <div class="hotline">
@@ -301,6 +358,7 @@
 ধন্যবাদ ডিসকভারি ইন্টারনেট এর সাথে থাকার জন্যে।
 ডিসকভারি ইন্টারনেট
 📞 09638336633</div>
+        <button class="show-more-btn" onclick="toggleShowMore(this)">click more</button>
         <button class="copy-btn red" onclick="copyMsg('msg1', this)">📋 কপি করুন</button>
       </div>
     </div>
@@ -321,6 +379,7 @@
 ধন্যবাদ ডিসকভারি ইন্টারনেট এর সাথে থাকার জন্যে।
 ডিসকভারি ইন্টারনেট
 📞 09638336633</div>
+        <button class="show-more-btn" onclick="toggleShowMore(this)">click more</button>
         <button class="copy-btn orange" onclick="copyMsg('msg2', this)">📋 কপি করুন</button>
       </div>
     </div>
@@ -340,25 +399,27 @@
 
 ডিসকভারি ইন্টারনেট
 📞 09638336633</div>
+        <button class="show-more-btn" onclick="toggleShowMore(this)">click more</button>
         <button class="copy-btn yellow" onclick="copyMsg('msg3', this)">📋 কপি করুন</button>
       </div>
     </div>
-    <!--test-->
+    <!--NEW CLIENT FIRST MESSAGE-->
     <div class="card">
       <div class="card-header">
         <div class="badge yellow">🐢</div>
         <div class="card-header-text">
-          <h3 class="label-yellow">Single Fiber Down – Speed Issue</h3>
+          <h3 class="label-yellow">NEW CLIENT FIRST MESSAGE</h3>
           <span>স্পিড সমস্যা</span>
         </div>
       </div>
       <div class="card-body">
-        <div class="message-box" id="msg3">আসসালামুলাইকুম
+        <div class="message-box" id="msg4">আসসালামুলাইকুম
 আপনার অবগতির জন্যে জানানো যাচ্ছে যে, আমাদের একটা ব্যাকবন ফাইবার ডাউন আছে। স্পিড সংক্রান্ত ইসু পাবেন। সাময়িক সমস্যার জন্যে আমরা আন্তরিকভাবে দুঃখিত। টিম পাঠানো হয়েছে। ইনশাআল্লাহ দ্রুত সময়ের মধ্যে সার্ভিস স্টেবল হবে।
 
 ডিসকভারি ইন্টারনেট
 📞 09638336633</div>
-        <button class="copy-btn yellow" onclick="copyMsg('msg3', this)">📋 কপি করুন</button>
+        <button class="show-more-btn" onclick="toggleShowMore(this)">click more</button>
+        <button class="copy-btn yellow" onclick="copyMsg('msg4', this)">📋 কপি করুন</button>
       </div>
     </div>
 
@@ -372,12 +433,13 @@
         </div>
       </div>
       <div class="card-body">
-        <div class="message-box" id="msg4">আসসালামুলাইকুম
+        <div class="message-box" id="msg5">আসসালামুলাইকুম
 আপনার অবগতির জন্যে জানানো যাচ্ছে যে, আমাদের একটা ব্যাকবন ফাইবার ইমারজেন্সি ইসুতে মেরামত করা হবে। সার্ভিস ১০ থেকে ১৫ মিনিট ডাউন থাকবে। সাময়িক সমস্যার জন্যে আমরা আন্তরিকভাবে দুঃখিত। ইনশাআল্লাহ দ্রুত সময়ের মধ্যে সার্ভিস আপ হবে।
 
 ডিসকভারি ইন্টারনেট
 📞 09638336633</div>
-        <button class="copy-btn cyan" onclick="copyMsg('msg4', this)">📋 কপি করুন</button>
+        <button class="show-more-btn" onclick="toggleShowMore(this)">click more</button>
+        <button class="copy-btn cyan" onclick="copyMsg('msg5', this)">📋 কপি করুন</button>
       </div>
     </div>
 
@@ -386,21 +448,35 @@
       <div class="card-header">
         <div class="badge green">✅</div>
         <div class="card-header-text">
-          <h3 class="label-green">Service Fixed / Resolved</h3>
-          <span>মেরামত সম্পন্ন</span>
+          <h3 class="label-green">Fixed / Resolved</h3>
+          <span>সমাধান হয়েছে</span>
         </div>
       </div>
       <div class="card-body">
-        <div class="message-box" id="msg5">আসসালামুলাইকুম
-আপনার অবগতির জন্যে জানানো যাচ্ছে যে, মেরামত সংক্রান্ত কাজ সম্পূর্ণ হয়েছে। সকল সার্ভিস সচল হয়েছে। কোন ইসু পেলে জানাবেন।
+        <div class="message-box" id="msg6">* ডেট/টাইম/রিজিওন (ঢাকা,বাংলাদেশ) ঠিক করা | 
+*রাউটার কনফিগার করতে যে সকল ধাপগুলো পালন করবেন ***
 
-ডিসকভারি ইন্টারনেট
-📞 09638336633</div>
-        <button class="copy-btn green" onclick="copyMsg('msg5', this)">📋 কপি করুন</button>
+* ডেট/টাইম/রিজিওন (ঢাকা,বাংলাদেশ) ঠিক করা | 
+* GMT+6 দেয়া |
+*  ম্যানুয়ালি DNS দেয়া |
+      প্রাইমারি dns : 103.120.165.65
+      সেকেন্ডারি dns : 8.8.8.8 
+*  MTU 1480 দেয়া |
+*  WAN পিং এনাবল করা |
+*  অটো রিবুট  05:00 AM  দেয়া |
+*  5GHz ফ্রিকোয়েন্সি তে রাউটার ব্যবহার করা |
+* 2.4GHz and 5GHz এর জন্যে ভিন্ন ভিন্ন নাম ব্যবহার করা।
+*  রাউটার এ রিমোট ম্যানেজমেন্ট চালু করা |
+*  স্ট্রং পাসওয়ার্ড (স্পেশাল ক্যারেক্টার) ব্যাবহার করা | 
+*  নিয়মিত রাউটার ফার্মওয়্যার আপগ্রেড রাখা |
+*  রাউটারের সাথের শর্ট ক্যাবল ব্যাবহার না করা |
+
+ডিসকভারি ইন্টারনেট</div>
+        <button class="show-more-btn" onclick="toggleShowMore(this)">click more</button>
+        <button class="copy-btn green" onclick="copyMsg('msg6', this)">📋 কপি করুন</button>
       </div>
     </div>
 
-  </div>
 </main>
 
 <div class="toast" id="toast">✅ বার্তা কপি হয়েছে!</div>
@@ -425,6 +501,39 @@
       }, 2000);
     });
   }
+
+  // toggle show more for message boxes
+  function toggleShowMore(btn) {
+    const messageBox = btn.previousElementSibling;
+    messageBox.classList.toggle('expanded');
+    btn.textContent = messageBox.classList.contains('expanded') ? 'click less' : 'click more';
+  }
+
+  // check if message box overflows and show button
+  function checkMessageBoxOverflow() {
+    document.querySelectorAll('.message-box').forEach(box => {
+      const btn = box.nextElementSibling;
+      if (btn && btn.classList.contains('show-more-btn')) {
+        if (box.scrollHeight > box.clientHeight) {
+          btn.classList.add('visible');
+        }
+      }
+    });
+  }
+
+  // filter cards by header name
+  document.getElementById('search').addEventListener('input', function(e) {
+    const query = e.target.value.trim().toLowerCase();
+    document.querySelectorAll('.card').forEach(card => {
+      const nameEl = card.querySelector('.card-header-text h3');
+      const name = nameEl ? nameEl.innerText.toLowerCase() : '';
+      card.style.display = name.includes(query) ? '' : 'none';
+    });
+  });
+
+  // check overflow on load and window resize
+  window.addEventListener('load', checkMessageBoxOverflow);
+  window.addEventListener('resize', checkMessageBoxOverflow);
 </script>
 
 </body>
