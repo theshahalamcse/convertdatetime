@@ -322,7 +322,7 @@
   <div class="header-left">
     <div class="logo">
     <div class="logo-icon">🌐</div>
-    <div>
+    <div class="header_left_text">
       <h1>DISCOVERY INTERNET</h1>
       <p>Message Template Panel</p>
     </div>
@@ -486,6 +486,11 @@
 </footer>
 
 <script>
+  // prevent browser from auto-restoring scroll position
+  if (history.scrollRestoration) {
+    history.scrollRestoration = 'manual';
+  }
+
   function copyMsg(id, btn) {
     const text = document.getElementById(id).innerText;
     navigator.clipboard.writeText(text).then(() => {
@@ -530,10 +535,6 @@
       card.style.display = name.includes(query) ? '' : 'none';
     });
   });
-
-  // check overflow on load and window resize
-  window.addEventListener('load', checkMessageBoxOverflow);
-  window.addEventListener('resize', checkMessageBoxOverflow);
 </script>
 
 </body>
