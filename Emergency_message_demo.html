@@ -311,7 +311,7 @@
   footer {
     text-align: center;
     padding: 32px;
-    color: black;
+    color: rgb(7, 0, 0);
     background-color:#dbf5f3; 
     font-size: 12px;
     letter-spacing: 1px;
@@ -814,6 +814,85 @@ https://imotv.net/cricbaz-3.1.apk</div>
         <button class="show-more-btn" onclick="toggleShowMore(this)">click more</button>
         <button class="copy-btn cyan" onclick="copyMsg('msg9', this)">📋 কপি করুন</button>
       </div>
+    </div>
+    <!--Single customer Complain-->
+    <div class="card">
+      <div class="card-header">
+        <div class="badge cyan">⚠️</div>
+        <div class="card-header-text">
+          <h3 class="label-cyan">Single Customer Complain</h3>
+          <span>একক গ্রাহকের অভিযোগ</span>
+        </div>
+      </div>
+        <div class="card-body">
+            <div class="message-box" id="msg10">সিঙ্গেল লাইন স্লো হলে করণীয়:
+
+* অণুর লেজার চেক করা
+* ইথার/শর্ট ক্যাবল চেক করা 
+* 5Ghz রাউটার কানেক্ট করে speedtest.net এর রেজাল্ট চেক করা
+* অণু ও রাউটারের সাথের পাওয়ার এডপ্টার ব্যবহার করা
+* DC UPS ব্যবহারের ক্ষেত্রে ভোল্টেজ ঠিক রেখে ক্যাবল কানেকশন করা
+           </div>
+            <button class="show-more-btn" onclick="toggleShowMore(this)">click more</button>
+            <button class="copy-btn cyan" onclick="copyMsg('msg10', this)">📋 কপি করুন</button>
+        </div>
+    </div>
+    <!--Maximum User complain-->
+    <div class="card">
+      <div class="card-header">
+        <div class="badge cyan">⚠️</div>
+        <div class="card-header-text">
+          <h3 class="label-cyan">Maximum User Complain</h3>
+          <span>সর্বাধিক গ্রাহকের অভিযোগ</span>
+        </div>
+      </div>
+        <div class="card-body">
+            <div class="message-box" id="msg11">মাল্টিপল লাইন স্লো হলে করণীয়:
+                সব লাইন স্লো হলে করণীয়:
+
+* আপলিংকের  লেজার চেক করা
+* OLT গিগাপোর্ট থেকে 5Ghz রাউটার কানেক্ট করে speedtest.net রেজাল্ট চেক করা
+* ক্লাইন্ট যা যা স্লো বলে তা নিজে চেক করে দেখা 
+* OLT তে ডুয়েল পাওয়ার ক্যাবল ব্যবহার করা
+
+            </div>
+            <button class="show-more-btn" onclick="toggleShowMore(this)">click more</button>
+            <button class="copy-btn cyan" onclick="copyMsg('msg11', this)">📋 কপি করুন</button>
+        </div>
+    </div>
+    <!--User Complaints-->
+    <div class="card">
+      <div class="card-header">
+        <div class="badge cyan">⚠️</div>
+        <div class="card-header-text">
+          <h3 class="label-cyan">User Complaints</h3>
+          <span>গ্রাহকের অভিযোগ</span>
+        </div>
+      </div>
+        <div class="card-body">
+            <div class="message-box" id="msg12">কোনো কাস্টমার কমপ্লেইন দিলে করণীয় কাজ :
+১. কাস্টমার অনলাইন না অফলাইনে তা চেক করা।  
+2. কাস্টমার এর  গ্রাফ চেক করা।  
+৩. কাস্টমার আর সাথে সরাসরি মিট করা।  
+৪. যদি অনু দিয়া লাইন না হয় তাহলে অনু দিয়া লাইন কানেক্ট করা।
+৫. লেজার ১৪-২৪ এর মধ্যেই হতে হবে তা চেক করা(অনু আর প্যাচ কড এ ।  
+৬. রাউটার এর সাথে ডিভাইস(মোবাইল ) এর পিং চেক কর।
+ ৭. নরমাল ms ১-৫ এর মধ্যেই থাকতে হব। 
+৮. রাউটার এ কত জন কানেক্ট তা চেক কর।
+ ৯. কাস্টমার এর ডিভাইস(মোবাইল ) এর সাথে রাউটার এর  লিংক স্পিড কত তা চেক কর।
+১০. রাউটার আপডেট কিনা তা চেক করা।
+ ১১. WAN পোর্ট / ইন্টারনেট পোর্ট / রাউটার এর ইনপুট পোর্ট স্পিড 100Mbps or 1000Mbps  
+ আছে কিনা তা চেক করা।১২.রাউটার আপটাইম চেক করা।
+ ১২ ঘন্টার বেশি আপটাইম হলে রাউটার রিস্টার্ট করা।
+১৩. রাউটার এর সিপিইউ ৫০ পার্সেন্ট এর নিচে হতে হবে 
+১৪. আপনার ডিভাইস(মোবাইল, কম্পিউটার , ল্যাপটপ ) আর সিপিইউ ৫০ পার্সেন্ট এর নিচে হতে হবে।  
+১৫. কাস্টমার কে Gbps/1000Mbps LAN   , Gbps/1000Mbps WAN পোর্ট , 5G Feature include রাউটার   কিনবার পরার্মশ দেয়া। 
+ এই কন্ডিশন ওকে থাকা সত্বেও যদি লাইন প্রব্লেম ফেস করেন তাহলে anydesk শেয়ার করবেন।
+আমাদের সাথে থাকার জন্য আপনাকে ধন্যবাদ।
+ডিসকভারি ইন্টারনেট।</div>
+            <button class="show-more-btn" onclick="toggleShowMore(this)">click more</button>
+            <button class="copy-btn cyan" onclick="copyMsg('msg12', this)">📋 কপি করুন</button>
+        </div>
     </div>
 
 </main>
