@@ -350,7 +350,7 @@
 
   <header>
     <h1>Excel → CSV Converter</h1>
-    <p>MAXIM EXCEL DOWNLOAD FORMAT:</p>
+    <p>MAXIM EXCEL DOWNLOAD FORMAT: Customer_id,Name,Username,Password,Package,Exp_Date,Area,Mobile,NID,Address,Status,Created</p>
   </header>
 
   <!-- Upload -->
@@ -694,7 +694,8 @@
           return formatDate(val);
         }
         if (sk === 'STATUS') {
-          return '';
+          const status = String(val).trim().toLowerCase();
+          return status === 'active' ? '' : String(val);
         }
         const s = String(val);
         return s.includes(',') || s.includes('"') || s.includes('\n')
