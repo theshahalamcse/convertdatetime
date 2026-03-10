@@ -6,6 +6,8 @@
   <title>ONU Data Table Converter</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <style>
     :root {
       --bg-deep:     #090d14;
@@ -134,6 +136,134 @@
       transition: border-color .2s, color .2s;
     }
     .btn-clear:hover { border-color: var(--danger); color: var(--danger); }
+
+    .btn-issue {
+      background: linear-gradient(135deg, #c0392b, #ff3b5c);
+      color: #fff;
+      font-family: 'Exo 2', sans-serif;
+      font-weight: 700;
+      letter-spacing: .07em;
+      font-size: .82rem;
+      border: none;
+      border-radius: 8px;
+      padding: .6rem 1.4rem;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(255,59,92,.35);
+      transition: transform .15s, box-shadow .15s;
+      display: flex; align-items: center; gap: .45rem;
+    }
+    .btn-issue:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(255,59,92,.55); }
+    .btn-issue:active { transform: translateY(0); }
+    .btn-issue .badge-count {
+      background: rgba(255,255,255,.2);
+      border-radius: 10px;
+      padding: .05rem .45rem;
+      font-size: .75rem;
+      min-width: 22px;
+      text-align: center;
+    }
+
+    .btn-pdf {
+      background: linear-gradient(135deg, #1a5c38, #00c46a);
+      color: #fff;
+      font-family: 'Exo 2', sans-serif;
+      font-weight: 700;
+      letter-spacing: .07em;
+      font-size: .82rem;
+      border: none;
+      border-radius: 8px;
+      padding: .6rem 1.4rem;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(0,196,106,.3);
+      transition: transform .15s, box-shadow .15s, opacity .2s;
+      display: flex; align-items: center; gap: .45rem;
+      opacity: .45;
+      pointer-events: none;
+    }
+    .btn-pdf.active { opacity: 1; pointer-events: auto; }
+    .btn-pdf.active:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,196,106,.5); }
+    .btn-pdf.active:active { transform: translateY(0); }
+
+    /* ── Issue modal overlay ── */
+    .issue-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(5,10,20,.85);
+      backdrop-filter: blur(6px);
+      z-index: 1000;
+      align-items: center; justify-content: center;
+    }
+    .issue-overlay.show { display: flex; }
+    .issue-modal {
+      background: var(--bg-card);
+      border: 1px solid var(--danger);
+      border-radius: 12px;
+      width: min(92vw, 780px);
+      max-height: 82vh;
+      display: flex; flex-direction: column;
+      box-shadow: 0 0 40px rgba(255,59,92,.25);
+      overflow: hidden;
+    }
+    .issue-modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.4rem;
+      background: var(--bg-panel);
+      border-bottom: 1px solid rgba(255,59,92,.35);
+    }
+    .issue-modal-header h2 {
+      font-size: 1rem; font-weight: 700; letter-spacing: .06em;
+      color: var(--danger);
+      display: flex; align-items: center; gap: .6rem;
+    }
+    .issue-modal-header h2 svg { width: 18px; height: 18px; stroke: var(--danger); }
+    .modal-close {
+      background: none; border: none; color: var(--text-dim);
+      font-size: 1.4rem; cursor: pointer; line-height: 1;
+      transition: color .15s;
+    }
+    .modal-close:hover { color: var(--danger); }
+    .issue-modal-body { overflow-y: auto; padding: 1rem 1.4rem; flex: 1; }
+    .issue-modal-footer {
+      padding: .75rem 1.4rem;
+      border-top: 1px solid var(--border);
+      display: flex; gap: .75rem; justify-content: flex-end;
+    }
+    .issue-summary {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .issue-chip {
+      background: rgba(255,59,92,.1);
+      border: 1px solid rgba(255,59,92,.3);
+      border-radius: 6px;
+      padding: .3rem .75rem;
+      font-size: .75rem;
+      font-family: 'Share Tech Mono', monospace;
+      color: #ff8fa0;
+    }
+    .issue-chip strong { color: var(--danger); }
+
+    /* issue table */
+    .issue-table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+    .issue-table thead tr { background: rgba(255,59,92,.12); border-bottom: 1px solid rgba(255,59,92,.3); }
+    .issue-table th {
+      padding: .6rem .9rem; font-family: 'Share Tech Mono', monospace;
+      font-size: .68rem; letter-spacing: .08em; text-transform: uppercase;
+      color: #ff8fa0; text-align: left; white-space: nowrap;
+    }
+    .issue-table tbody tr { border-bottom: 1px solid var(--border); }
+    .issue-table tbody tr:last-child { border-bottom: none; }
+    .issue-table tbody tr:hover { background: rgba(255,59,92,.04); }
+    .issue-table td {
+      padding: .6rem .9rem; font-family: 'Share Tech Mono', monospace;
+      color: var(--text-main); white-space: nowrap;
+    }
+    .issue-table td.onu-id { color: var(--accent2); font-weight: 600; }
+    .reason-tag {
+      display: inline-block; background: rgba(255,59,92,.15);
+      border: 1px solid rgba(255,59,92,.3); border-radius: 4px;
+      padding: .1rem .45rem; font-size: .72rem; color: #ff8fa0;
+    }
 
     /* ── Stats bar ── */
     .stats-bar {
@@ -301,6 +431,18 @@ EPON0/4:2   47.99   3.26   7.74    2.24   -17.28
       <button class="btn-convert" onclick="convertData()">
         ⚡ CONVERT TO TABLE
       </button>
+      <button class="btn-issue" id="btnIssue" onclick="showIssues()">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;stroke:#fff">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        ONU ISSUE <span class="badge-count" id="issueCount">0</span>
+      </button>
+      <button class="btn-pdf" id="btnPdf" onclick="downloadIssuePDF()">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;stroke:#fff">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="12" y2="18"/><line x1="15" y1="15" x2="12" y2="18"/>
+        </svg>
+        DOWNLOAD ISSUE PDF
+      </button>
       <button class="btn-clear" onclick="clearAll()">✕ Clear</button>
     </div>
   </div>
@@ -323,6 +465,30 @@ EPON0/4:2   47.99   3.26   7.74    2.24   -17.28
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Issue Modal -->
+  <div class="issue-overlay" id="issueOverlay">
+    <div class="issue-modal">
+      <div class="issue-modal-header">
+        <h2>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          ONU ISSUE REPORT — RX Power Anomalies
+        </h2>
+        <button class="modal-close" onclick="closeIssues()">×</button>
+      </div>
+      <div class="issue-modal-body" id="issueModalBody"></div>
+      <div class="issue-modal-footer">
+        <button class="btn-pdf active" onclick="downloadIssuePDF(); closeIssues();" style="opacity:1;pointer-events:auto;font-size:.82rem;padding:.6rem 1.4rem;">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;stroke:#fff">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="12" y2="18"/><line x1="15" y1="15" x2="12" y2="18"/>
+          </svg>
+          DOWNLOAD PDF
+        </button>
+        <button class="btn-clear" onclick="closeIssues()">Close</button>
+      </div>
+    </div>
+  </div>
 <script>
   // ── Pre-fill with sample data ──────────────────────────────────────────────
   const SAMPLE = `ONU-ID      Temperature(C)    Supply Voltage(V)   TX Bias Current(mA)   TX Power(dBm)   RX Power(dBm)
@@ -430,6 +596,7 @@ EPON0/4:69  43.63             3.21                12.80                 2.69    
     sortCol = null; sortDir = 'asc';
     renderTable();
     renderStats();
+    updateIssueButton();
   }
 
   function clearAll() {
@@ -443,6 +610,8 @@ EPON0/4:69  43.63             3.21                12.80                 2.69    
         <p>Paste your ONU data above and click <strong style="color:var(--accent)">Convert to Table</strong></p>
       </div>`;
     document.getElementById('statsBar').style.setProperty('display','none','important');
+    document.getElementById('issueCount').textContent = '0';
+    document.getElementById('btnPdf').classList.remove('active');
   }
 
   // ── Sort ───────────────────────────────────────────────────────────────────
@@ -530,7 +699,186 @@ EPON0/4:69  43.63             3.21                12.80                 2.69    
     document.getElementById('tableContainer').innerHTML = html;
   }
 
-  // ── Render Stats ───────────────────────────────────────────────────────────
+  // ── Issue Logic: RX outside (-25 to -12) means issue ─────────────────────
+  // "up -25 and down -12" = RX < -25 (too weak) OR RX > -12 (too strong)
+  function getIssueONUs() {
+    return tableData.filter(r => r.rxpow < -25 || r.rxpow > -12);
+  }
+
+  function issueReason(r) {
+    const reasons = [];
+    if (r.rxpow < -25) reasons.push(`RX too weak (${r.rxpow.toFixed(2)} dBm)`);
+    if (r.rxpow > -12) reasons.push(`RX too strong (${r.rxpow.toFixed(2)} dBm)`);
+    return reasons;
+  }
+
+  function updateIssueButton() {
+    const count = getIssueONUs().length;
+    document.getElementById('issueCount').textContent = count;
+    const pdfBtn = document.getElementById('btnPdf');
+    if (count > 0) pdfBtn.classList.add('active');
+    else pdfBtn.classList.remove('active');
+  }
+
+  function showIssues() {
+    if (!tableData.length) { alert('⚠ Convert data first.'); return; }
+    const issues = getIssueONUs();
+    const body = document.getElementById('issueModalBody');
+
+    if (!issues.length) {
+      body.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--accent2)">
+        <div style="font-size:2rem;margin-bottom:.5rem">✓</div>
+        <p style="font-size:.95rem">All ONUs are within acceptable RX range (−25 to −12 dBm)</p></div>`;
+    } else {
+      const tooWeak  = issues.filter(r => r.rxpow < -25).length;
+      const tooStrong = issues.filter(r => r.rxpow > -12).length;
+      let html = `
+        <div class="issue-summary">
+          <div class="issue-chip">Total Issues: <strong>${issues.length}</strong></div>
+          <div class="issue-chip">RX Too Weak (&lt;−25 dBm): <strong>${tooWeak}</strong></div>
+          <div class="issue-chip">RX Too Strong (&gt;−12 dBm): <strong>${tooStrong}</strong></div>
+          <div class="issue-chip" style="color:var(--text-dim)">Normal Range: −25 to −12 dBm</div>
+        </div>
+        <div style="overflow-x:auto">
+        <table class="issue-table">
+          <thead><tr>
+            <th>#</th><th>ONU-ID</th><th>Temp (°C)</th><th>Voltage (V)</th>
+            <th>TX Bias (mA)</th><th>TX Power (dBm)</th><th>RX Power (dBm)</th><th>Issue Reason</th>
+          </tr></thead><tbody>`;
+      issues.forEach((r, i) => {
+        const reasons = issueReason(r);
+        html += `<tr>
+          <td style="color:var(--text-dim)">${i+1}</td>
+          <td class="onu-id">${r.id}</td>
+          <td>${r.temp.toFixed(2)}</td>
+          <td>${r.volt.toFixed(2)}</td>
+          <td>${r.bias.toFixed(2)}</td>
+          <td>${r.txpow.toFixed(2)}</td>
+          <td><span class="badge-val ${r.rxpow < -30 ? 'badge-crit' : r.rxpow < -25 ? 'badge-hot' : 'badge-warn'}">${r.rxpow.toFixed(2)}</span></td>
+          <td>${reasons.map(rs => `<span class="reason-tag">${rs}</span>`).join(' ')}</td>
+        </tr>`;
+      });
+      html += `</tbody></table></div>`;
+      body.innerHTML = html;
+    }
+    document.getElementById('issueOverlay').classList.add('show');
+  }
+
+  function closeIssues() {
+    document.getElementById('issueOverlay').classList.remove('show');
+  }
+
+  // close on backdrop click
+  document.getElementById('issueOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeIssues();
+  });
+
+  // ── PDF Download ───────────────────────────────────────────────────────────
+  function downloadIssuePDF() {
+    if (!tableData.length) { alert('⚠ Convert data first.'); return; }
+    const issues = getIssueONUs();
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+    const pageW = doc.internal.pageSize.getWidth();
+    const now = new Date().toLocaleString();
+
+    // ── Title block ──
+    doc.setFillColor(13, 21, 32);
+    doc.rect(0, 0, pageW, 28, 'F');
+    doc.setFontSize(16);
+    doc.setTextColor(255, 59, 92);
+    doc.setFont('helvetica', 'bold');
+    doc.text('ONU ISSUE REPORT — RX Power Anomalies', 14, 11);
+    doc.setFontSize(8);
+    doc.setTextColor(77, 122, 158);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Generated: ${now}  |  Total ONUs Scanned: ${tableData.length}  |  Issues Found: ${issues.length}  |  RX Normal Range: −25 to −12 dBm`, 14, 19);
+
+    // ── Summary chips ──
+    doc.setFontSize(9);
+    const tooWeak   = issues.filter(r => r.rxpow < -25).length;
+    const tooStrong = issues.filter(r => r.rxpow > -12).length;
+    doc.setTextColor(255, 59, 92);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Issues: ${issues.length}`, 14, 26);
+    doc.setTextColor(77, 122, 158);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`  RX Too Weak (<-25 dBm): ${tooWeak}   RX Too Strong (>-12 dBm): ${tooStrong}`, 38, 26);
+
+    if (!issues.length) {
+      doc.setFontSize(13);
+      doc.setTextColor(0, 196, 106);
+      doc.text('All ONUs within normal RX range. No issues detected.', pageW/2, 80, { align: 'center' });
+    } else {
+      const head = [['#', 'ONU-ID', 'Temp (°C)', 'Voltage (V)', 'TX Bias (mA)', 'TX Power (dBm)', 'RX Power (dBm)', 'Issue Reason']];
+      const body = issues.map((r, i) => [
+        i + 1,
+        r.id,
+        r.temp.toFixed(2),
+        r.volt.toFixed(2),
+        r.bias.toFixed(2),
+        r.txpow.toFixed(2),
+        r.rxpow.toFixed(2),
+        issueReason(r).join(' | ')
+      ]);
+
+      doc.autoTable({
+        head,
+        body,
+        startY: 32,
+        styles: {
+          fontSize: 8.5,
+          cellPadding: 3,
+          font: 'courier',
+          textColor: [205, 232, 255],
+          fillColor: [17, 28, 43],
+          lineColor: [26, 48, 80],
+          lineWidth: 0.3,
+        },
+        headStyles: {
+          fillColor: [13, 21, 32],
+          textColor: [255, 143, 160],
+          fontStyle: 'bold',
+          halign: 'center',
+        },
+        alternateRowStyles: { fillColor: [13, 21, 32] },
+        columnStyles: {
+          0: { halign: 'center', cellWidth: 10 },
+          1: { textColor: [0, 255, 153], fontStyle: 'bold', cellWidth: 28 },
+          2: { halign: 'right', cellWidth: 22 },
+          3: { halign: 'right', cellWidth: 24 },
+          4: { halign: 'right', cellWidth: 28 },
+          5: { halign: 'right', cellWidth: 28 },
+          6: { halign: 'right', textColor: [255, 59, 92], fontStyle: 'bold', cellWidth: 28 },
+          7: { textColor: [255, 143, 160], cellWidth: 'auto' },
+        },
+        didDrawCell(data) {
+          // highlight RX cell row background for critical rows
+          if (data.section === 'body' && data.column.index === 6) {
+            const val = parseFloat(data.cell.raw);
+            if (val < -30) {
+              doc.setFillColor(80, 10, 20);
+              doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
+              doc.setTextColor(255, 59, 92);
+              doc.setFontSize(8.5);
+              doc.text(data.cell.raw, data.cell.x + data.cell.width/2, data.cell.y + data.cell.height/1.5, { align: 'center' });
+            }
+          }
+        },
+        margin: { left: 14, right: 14 },
+      });
+
+      // footer
+      const finalY = doc.lastAutoTable.finalY + 6;
+      doc.setFontSize(7.5);
+      doc.setTextColor(77, 122, 158);
+      doc.text('* RX Power outside range [−25 dBm, −12 dBm] indicates signal issues. Values below −25 dBm = weak signal / fiber loss. Values above −12 dBm = overdriven / too close.', 14, finalY);
+    }
+
+    doc.save(`ONU_Issue_Report_${new Date().toISOString().slice(0,10)}.pdf`);
+  }
+
   function renderStats() {
     const bar = document.getElementById('statsBar');
     bar.style.removeProperty('display');
