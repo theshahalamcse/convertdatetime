@@ -560,29 +560,59 @@ EPON0/4:69  43.63             3.21                12.80                 2.69    
 
   // ── Parse ──────────────────────────────────────────────────────────────────
   function parseRaw(raw) {
-    const rows = [];
-    const lines = raw.split('\n');
-    for (const line of lines) {
-      const t = line.trim();
-      if (!t) continue;
-      if (t.startsWith('ONU-ID') || t.startsWith('---') || t.startsWith('======')) continue;
+  const rows = [];
+  const lines = raw.split('\n');
 
-      // split on 2+ spaces
-      const parts = t.split(/\s{2,}/).map(s => s.trim()).filter(Boolean);
-      if (parts.length < 6) continue;
-      if (!parts[0].toUpperCase().startsWith('EPON')) continue;
+  for (const line of lines) {
+    const t = line.trim();
+    if (!t) continue;
+
+    // ignore headers
+    if (t.startsWith('ONU-ID') || t.startsWith('PON/ONU') || t.startsWith('---')) continue;
+
+    // -----------------------------
+    // FORMAT 1: EPON0/4:1 format
+    // -----------------------------
+    if (t.toUpperCase().startsWith('EPON')) {
+      const parts = t.split(/\s+/);
+
+      if (parts.length >= 6) {
+        rows.push({
+          id: parts[0],
+          temp: parseFloat(parts[1]),
+          volt: parseFloat(parts[2]),
+          bias: parseFloat(parts[3]),
+          txpow: parseFloat(parts[4]),
+          rxpow: parseFloat(parts[5]),
+        });
+      }
+      continue;
+    }
+
+    // ----------------------------------
+    // FORMAT 2: PON/ONU ONU-NAME format
+    // ----------------------------------
+    const parts = t.split(/\s+/);
+
+    // detect MAC address
+    if (parts.length >= 12 && parts[2].includes(':')) {
+
+      const pon = parts[0];
+      const onuName = parts[1];
 
       rows.push({
-        id:    parts[0],
-        temp:  parseFloat(parts[1]),
-        volt:  parseFloat(parts[2]),
-        bias:  parseFloat(parts[3]),
-        txpow: parseFloat(parts[4]),
-        rxpow: parseFloat(parts[5]),
+        id: pon + " " + onuName,
+        temp: parseFloat(parts[3]),
+        volt: parseFloat(parts[5]),
+        bias: parseFloat(parts[7]),
+        txpow: parseFloat(parts[9]),
+        rxpow: parseFloat(parts[11]),
       });
     }
-    return rows;
   }
+
+  return rows;
+}
 
   // ── Convert ────────────────────────────────────────────────────────────────
   function convertData() {
