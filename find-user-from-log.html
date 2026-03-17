@@ -16,7 +16,7 @@ textarea:focus { outline: none; box-shadow: 0 0 0 2px #0d6efd55; border-color: #
 </style>
 </head>
 <body>
-<div class="container-fluid py-3 px-2">
+<div class="container p-3 bg-success">
 
   <div class="mb-2">
     <label class="form-label fw-500 mb-1" style="font-size:13px;">Paste log text</label>
@@ -25,7 +25,7 @@ textarea:focus { outline: none; box-shadow: 0 0 0 2px #0d6efd55; border-color: #
 
   <div class="d-flex gap-2 mb-3">
     <button class="btn btn-primary btn-sm px-4" onclick="process()">Extract</button>
-    <button class="btn btn-outline-secondary btn-sm" onclick="clearAll()">Clear</button>
+    <button class="btn btn btn-primary btn-sm" onclick="clearAll()">Clear</button>
   </div>
 
   <div class="row g-2 mb-3" id="statsRow" style="display:none!important;">
@@ -52,7 +52,7 @@ textarea:focus { outline: none; box-shadow: 0 0 0 2px #0d6efd55; border-color: #
   <div id="resultWrap" style="display:none;">
     <div class="d-flex align-items-center justify-content-between mb-1">
       <span style="font-size:12px;color:#6c757d;">Unique usernames — view only</span>
-      <button class="btn btn-outline-secondary btn-sm" id="copyBtn" onclick="copyOutput()">Copy</button>
+      <button class="btn btn btn-primary btn-sm" id="copyBtn" onclick="copyOutput()">Copy</button>
     </div>
     <div id="output"></div>
   </div>
